@@ -230,7 +230,17 @@ function App() {
     return result;
   }, [entries]);
 
+const totalTunches = useMemo(() => {
+  const result = {};
 
+  for (const entry of entries) {
+    result[entry.customerId] =
+      (result[entry.customerId] || 0) +
+      Number(entry.tunch || 0);
+  }
+
+  return result;
+}, [entries]);
   // --------------------------------------------------
   // CUSTOMER SEARCH
   // --------------------------------------------------
@@ -1134,22 +1144,27 @@ function App() {
 
             <div className="modalHead">
 
-              <div>
+          <div>
+  <h2>
+    {selectedCustomer.name}
+  </h2>
 
-                <h2>
-                  {selectedCustomer.name}
-                </h2>
+  <b>
+    Total PCS:{" "}
+    {formatPcs(
+      totals[selectedCustomer.id] || 0
+    )}
+  </b>
 
-                <b>
-                  {t.total}:{" "}
-                  {formatPcs(
-                    totals[
-                      selectedCustomer.id
-                    ] || 0
-                  )}
-                </b>
+  <br />
 
-              </div>
+  <b>
+    Total Tunch:{" "}
+    {formatPcs(
+      totalTunches[selectedCustomer.id] || 0
+    )}
+  </b>
+</div>
 
 
               <button
