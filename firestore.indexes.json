@@ -1,0 +1,8 @@
+{
+  "indexes": [
+    {"collectionGroup":"entries","queryScope":"COLLECTION","fields":[{"fieldPath":"dateTime","order":"DESCENDING"}]},
+    {"collectionGroup":"customers","queryScope":"COLLECTION","fields":[{"fieldPath":"nameLower","order":"ASCENDING"}]},
+    {"collectionGroup":"recycleBin","queryScope":"COLLECTION","fields":[{"fieldPath":"deletedAt","order":"DESCENDING"}]}
+  ],
+  "fieldOverrides":[]
+}
