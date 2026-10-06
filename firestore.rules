@@ -1,12 +1,18 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // PERSONAL/PRIVATE DEPLOYMENT ONLY.
     // There is intentionally no login in this version.
     // Anyone who can reach the Firebase project can read/write these collections.
+
     match /customers/{id} { allow read, write: if true; }
     match /entries/{id} { allow read, write: if true; }
     match /aliases/{id} { allow read, write: if true; }
     match /recycleBin/{id} { allow read, write: if true; }
+
+    // Amount Settlement feature
+    match /settlements/{id} { allow read, write: if true; }
+    match /customerBalances/{id} { allow read, write: if true; }
   }
 }

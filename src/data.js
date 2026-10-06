@@ -88,3 +88,58 @@ export async function restoreRecycle(item) {
 export async function permanentlyDeleteRecycle(item) {
   await deleteDoc(doc(recycleRef,item.id));
 }
+
+
+
+export const settlementsRef = collection(db, "settlements");
+
+// Listen to all customer settlement records in real time.
+export function watchSettlements(cb) {
+  return onSnapshot(
+    query(settlementsRef, orderBy("createdAt", "desc")),
+    (snapshot) =>
+      cb(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })))
+  );
+}
+
+// Set or update a customer's manually entered outstanding amount.
+export async function setCustomerOutstanding(customer, amount) {
+  const outstanding = Number(amount);
+
+  if (!customer?.id) throw new Error("Please select a customer.");
+  if (!Number.isFinite(outstanding) || outstanding < 0) {
+    throw new Error("Outstanding amount must be zero or more.");
+  }
+
+  await setDoc(
+    doc(db, "customerBalances", customer.id),
+    {
+      customerId: customer.id,
+      customerName: customer.name,
+      outstanding,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
+}
+
+// Record money received from a customer.
+export async function recordSettlement(customer, amount, date, currentBalance) {
+  const received = Number(amount);
+
+  if (!customer?.id) throw new Error("Please select a customer.");
+  if (!Number.isFinite(received) || received <= 0) {
+    throw new Error("Received amount must be greater than zero.");
+  }
+  if (received > Number(currentBalance)) {
+    throw new Error("Received amount cannot exceed the outstanding balance.");
+  }
+
+  return addDoc(settlementsRef, {
+    customerId: customer.id,
+    customerName: customer.name,
+    amountReceived: received,
+    date,
+    createdAt: serverTimestamp(),
+  });
+}
